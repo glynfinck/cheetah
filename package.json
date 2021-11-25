@@ -1,0 +1,19 @@
+{
+  "name": "cheetah",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dateformat": "^5.0.2",
+    "node-q": "^2.6.0",
+    "promisify": "0.0.3",
+    "websocket-as-promised": "^2.0.1",
+    "ws": "^8.2.3"
+  }
+}
