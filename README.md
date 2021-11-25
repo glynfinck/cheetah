@@ -10,8 +10,8 @@ Cheetah is a Kdb+/Q object modeling tool designed to work in an asynchronous env
 
 ## Overview
 
-## Connecting to Kdb+
+### Connecting to Kdb+
 
-## Defining a Table
+### Defining a Table
 
-## Accessing a Table
+### Accessing a Table
