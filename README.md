@@ -1,4 +1,4 @@
-# Cheetah Framework
+# Cheetah
 
 Cheetah is a Kdb+/Q object modeling tool designed to work in an asynchronous environment. Cheetah supports both promises and callbacks.
 
