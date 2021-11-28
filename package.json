@@ -4,13 +4,22 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "test": "mocha --recursive",
+    "test:connection": "mocha \"test/connection\"",
+    "test:model": "mocha \"test/model\"",
+    "test:schema": "mocha \"test/schema\"",
+    "test:schematypes": "mocha \"test/schema-types\"",
+    "test:testutils": "mocha \"test/test-utils\"",
+    "test:utils": "mocha \"test/utils\""
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "dateformat": "^5.0.2",
+    "decimal.js": "^10.3.1",
+    "lodash": "^4.17.21",
     "node-q": "^2.6.0",
     "promisify": "0.0.3",
     "websocket-as-promised": "^2.0.1",
