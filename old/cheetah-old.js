@@ -6,10 +6,10 @@
 
 const EventEmitter = require('events').EventEmitter;
 const util = require('util');
-const Connection = require('./connection');
+const Connection = require('../lib/connection');
 const Model = require('./model-old');
-const Schema = require('./schema');
-const types = require('./schema-types');
+const Schema = require('../lib/schema');
+const types = require('../lib/schema-types');
 
 /**
  * Cheetah constructor.

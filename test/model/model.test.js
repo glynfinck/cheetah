@@ -51,7 +51,7 @@ describe("Test Model class method 'create'", function () {
       sym: 'APPL',
     });
 
-    console.log(newTrade);
+    //console.log(newTrade);
 
     await cheetah.close();
   });

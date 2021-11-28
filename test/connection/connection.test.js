@@ -1,5 +1,5 @@
 const factory = require('../test-factory');
-const cheetah = require('../../lib/cheetah-old');
+const cheetah = require('../../lib/cheetah');
 const Connection = require('../../lib/connection');
 const assert = require('assert');
 const types = cheetah.types;
