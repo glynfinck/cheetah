@@ -199,9 +199,8 @@ describe("Test Schema static class method '_validateSchemaUpdate'", function () 
 describe("Test Schema static class method 'validateSchemaUpdate'", function () {
   it('Test merge with the removal of a column for a table that is empty.', async function () {
     const conn = await cheetah.connect('127.0.0.1', 5001);
-    const name = 'Trade';
-    const table_name = 'trades';
-    const table_size = 0;
+    const name = 'TestSchemaTrade';
+    const table_name = 'testschematrades';
     const current_type_scema_obj = {
       symbol: { type: types.Symbol },
       price: { type: types.Real },
@@ -210,6 +209,8 @@ describe("Test Schema static class method 'validateSchemaUpdate'", function () {
       symbol: { type: types.Symbol },
       price: { type: types.Real },
     });
+
+    const TestSchemaTrade = await cheetah.model(name, current_type_scema_obj);
 
     // construct input vector
     const inputs = [name, table_name, new_schema, conn, cheetah];

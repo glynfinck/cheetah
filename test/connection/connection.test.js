@@ -25,7 +25,7 @@ describe("Test Connection member class method 'getCurrentTableTypeSchema'", func
     const conn = await cheetah.connect('127.0.0.1', 5001);
 
     // 2) construct inputs
-    const table_name = 'trades';
+    const table_name = 'tradetests';
     const inputs = [table_name, cheetah];
 
     // 3) construct expected
@@ -36,7 +36,16 @@ describe("Test Connection member class method 'getCurrentTableTypeSchema'", func
       },
       time: { type: types.Time },
       sym: { type: types.Symbol },
+      price: { type: types.Real },
+      size: { type: types.Int },
+      cond: { type: types.Char },
     };
+
+    const TradeTest = await cheetah.model(
+      'TradeTest',
+      new cheetah.Schema(table_type_schema_obj)
+    );
+
     const expected = [table_type_schema_obj, table_size];
 
     // 4) test async function

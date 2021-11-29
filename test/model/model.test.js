@@ -5,6 +5,8 @@ const assert = require('assert');
 
 describe("Test Model class method 'compile'", function () {
   it('Test if compile adds a model to Cheetah instance.', async function () {
+    // TODO: initialize a Kdb+/Q child process from JavaScript so that we can
+    //       run our tests without having to boot up our kdb server seperately
     await cheetah.connect('127.0.0.1', 5001);
 
     const name = 'Trade';
@@ -60,7 +62,7 @@ describe("Test Model class method 'create'", function () {
 
     const expected = [
       {
-        date: '2017.08.03d',
+        date: '2017.08.01d',
         time: '01:01:01.001',
         sym: '`GOOGL',
         price: '259.44e',
