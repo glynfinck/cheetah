@@ -11,14 +11,18 @@
     "test:schema": "mocha \"test/schema\"",
     "test:schematypes": "mocha \"test/schema-types\"",
     "test:utils": "mocha \"test/utils\"",
-    "test:testutils": "mocha \"test/test-utils\""
+    "test:testutils": "mocha \"test/test-utils\"",
+    "test:connectionserver": "mocha \"test/connection-server\""
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "child_process": "^1.0.2",
     "decimal.js": "^10.3.1",
     "lodash": "^4.17.21",
+    "mkdirp": "^1.0.4",
+    "rimraf": "^3.0.2",
     "websocket-as-promised": "^2.0.1",
     "ws": "^8.2.3"
   }

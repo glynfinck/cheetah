@@ -15,6 +15,8 @@ describe("Test Model class method 'compile'", function () {
       time: { type: types.Time },
       sym: { type: types.Symbol },
       price: { type: types.Real },
+      size: { type: types.Int, default: 10 },
+      cond: { type: types.Char, default: 'N' },
     });
 
     const Trade = await cheetah.model(name, tradeSchema);
@@ -49,15 +51,26 @@ describe("Test Model class method 'create'", function () {
     const Trade = await cheetah.model(name, tradeSchema);
 
     const newTrade = await Trade.create({
-      date: new Date(),
-      time: new Date(Date.now()),
+      date: new Date(2017, 7, 1),
+      time: new Date(2017, 7, 1, 1, 1, 1, 1),
       sym: 'GOOGL',
       price: 259.44,
       size: 50,
     });
 
-    //console.log(newTrade);
+    const expected = [
+      {
+        date: '2017.08.03d',
+        time: '01:01:01.001',
+        sym: '`GOOGL',
+        price: '259.44e',
+        size: '50i',
+        cond: '"N"',
+      },
+    ];
 
     await cheetah.close();
+
+    assert.deepEqual(expected, newTrade);
   });
 });
