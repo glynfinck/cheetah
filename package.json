@@ -18,12 +18,14 @@
   "author": "Glyn Finck",
   "license": "ISC",
   "dependencies": {
-    "child_process": "^1.0.2",
     "decimal.js": "^10.3.1",
     "lodash": "^4.17.21",
-    "mkdirp": "^1.0.4",
-    "rimraf": "^3.0.2",
     "websocket-as-promised": "^2.0.1",
     "ws": "^8.2.3"
+  },
+  "devDependencies": {
+    "child_process": "^1.0.2",
+    "mkdirp": "^1.0.4",
+    "rimraf": "^3.0.2"
   }
 }
