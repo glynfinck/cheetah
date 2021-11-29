@@ -14,12 +14,12 @@ describe("Test Model class method 'compile'", function () {
       },
       time: { type: types.Time },
       sym: { type: types.Symbol },
+      price: { type: types.Real },
     });
 
     const Trade = await cheetah.model(name, tradeSchema);
 
-    const expected = new Model();
-    expected._schema = tradeSchema;
+    const expected = new Model(name, tradeSchema, cheetah.connection);
 
     const valid =
       JSON.stringify(expected) === JSON.stringify(cheetah.models[name]);
@@ -31,7 +31,7 @@ describe("Test Model class method 'compile'", function () {
 });
 
 describe("Test Model class method 'create'", function () {
-  it('Test the creation of a new model to a table.', async function () {
+  it('Test the creation of a row for a model.', async function () {
     await cheetah.connect('127.0.0.1', 5001);
 
     const name = 'Trade';
@@ -41,14 +41,19 @@ describe("Test Model class method 'create'", function () {
       },
       time: { type: types.Time },
       sym: { type: types.Symbol },
+      price: { type: types.Real },
+      size: { type: types.Int, default: 10 },
+      cond: { type: types.Char, default: 'N' },
     });
 
     const Trade = await cheetah.model(name, tradeSchema);
 
     const newTrade = await Trade.create({
-      date: Date.now(),
-      time: Date.now(),
-      sym: 'APPL',
+      date: new Date(),
+      time: new Date(Date.now()),
+      sym: 'GOOGL',
+      price: 259.44,
+      size: 50,
     });
 
     //console.log(newTrade);

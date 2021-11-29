@@ -3,7 +3,7 @@ const cheetah = require('../../lib/cheetah');
 const Schema = require('../../lib/schema');
 const types = cheetah.types;
 
-describe("Test Schema static class method '_mergeSchemaObj'", function () {
+describe("Test Schema static class method '_validateSchemaUpdate'", function () {
   it('Test merge identical type_schema and new_schema_obj objects', function () {
     // choose inputs
     const name = 'Trade';
@@ -33,7 +33,7 @@ describe("Test Schema static class method '_mergeSchemaObj'", function () {
       price: { type: types.Real },
     };
 
-    factory.testFunctionOutput(Schema._mergeSchemaObj, inputs, expected);
+    Schema._validateSchemaUpdate(...inputs);
   });
   it('Test merge identical type_schema and new_schema_obj with identical "type" keys but different other keys for each column', function () {
     // choose inputs
@@ -64,7 +64,7 @@ describe("Test Schema static class method '_mergeSchemaObj'", function () {
       price: { type: types.Real },
     };
 
-    factory.testFunctionOutput(Schema._mergeSchemaObj, inputs, expected);
+    Schema._validateSchemaUpdate(...inputs);
   });
   it('Test merge identical type_schema and new_schema_obj with identical "type" keys but different other keys for each column', function () {
     // choose inputs
@@ -95,7 +95,7 @@ describe("Test Schema static class method '_mergeSchemaObj'", function () {
       price: { type: types.Real, required: true },
     };
 
-    factory.testFunctionOutput(Schema._mergeSchemaObj, inputs, expected);
+    Schema._validateSchemaUpdate(...inputs);
   });
   it('Test merge with a type change in one of the schema parameters for a table that is empty.', function () {
     // choose inputs
@@ -126,7 +126,7 @@ describe("Test Schema static class method '_mergeSchemaObj'", function () {
       price: { type: types.Float, required: true },
     };
 
-    factory.testFunctionOutput(Schema._mergeSchemaObj, inputs, expected);
+    Schema._validateSchemaUpdate(...inputs);
   });
   it('Test merge with the addition of a new column for a table that is empty.', function () {
     // choose inputs
@@ -159,7 +159,7 @@ describe("Test Schema static class method '_mergeSchemaObj'", function () {
       amount: { type: types.Int, required: true },
     };
 
-    factory.testFunctionOutput(Schema._mergeSchemaObj, inputs, expected);
+    Schema._validateSchemaUpdate(...inputs);
   });
 
   it('Test merge with the removal of a column for a table that is empty.', function () {
@@ -192,12 +192,13 @@ describe("Test Schema static class method '_mergeSchemaObj'", function () {
       price: { type: types.Real },
     };
 
-    factory.testFunctionOutput(Schema._mergeSchemaObj, inputs, expected);
+    Schema._validateSchemaUpdate(...inputs);
   });
   // TODO: correct error output testing
 });
-describe("Test Schema static class method 'mergeTypeSchema'", function () {
-  it('Test merge with the removal of a column for a table that is empty.', function () {
+describe("Test Schema static class method 'validateSchemaUpdate'", function () {
+  it('Test merge with the removal of a column for a table that is empty.', async function () {
+    const conn = await cheetah.connect('127.0.0.1', 5001);
     const name = 'Trade';
     const table_name = 'trades';
     const table_size = 0;
@@ -211,20 +212,14 @@ describe("Test Schema static class method 'mergeTypeSchema'", function () {
     });
 
     // construct input vector
-    const inputs = [
-      name,
-      table_name,
-      table_size,
-      current_type_scema_obj,
-      new_schema,
-    ];
+    const inputs = [name, table_name, new_schema, conn, cheetah];
 
-    // set expected output
-    const expected = new Schema({
-      symbol: { type: types.Symbol },
-      price: { type: types.Real },
-    });
+    const table_exists = await conn.tableExists(table_name, cheetah);
 
-    factory.testFunctionOutput(Schema.mergeTypeSchema, inputs, expected);
+    if (table_exists) {
+      await Schema.validateSchemaUpdate(...inputs);
+    }
+
+    cheetah.close();
   });
 });
