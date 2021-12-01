@@ -3,8 +3,8 @@ const cheetah = require('../../lib/cheetah');
 const types = cheetah.types;
 const assert = require('assert');
 
-describe("Test Model class method 'compile'", function () {
-  it('Test if compile adds a model to Cheetah instance.', async function () {
+describe('Test Model class method "compile"', function () {
+  it('Test if "compile" adds a model to Cheetah instance.', async function () {
     // TODO: initialize a Kdb+/Q child process from JavaScript so that we can
     //       run our tests without having to boot up our kdb server seperately
     await cheetah.connect('127.0.0.1', 5001);
@@ -19,6 +19,7 @@ describe("Test Model class method 'compile'", function () {
       price: { type: types.Real },
       size: { type: types.Int, default: 10 },
       cond: { type: types.Char, default: 'N' },
+      example: { type: types.Char, default: 'Y' },
     });
 
     const Trade = await cheetah.model(name, tradeSchema);
@@ -32,47 +33,103 @@ describe("Test Model class method 'compile'", function () {
 
     assert(valid);
   });
-});
-
-describe("Test Model class method 'create'", function () {
-  it('Test the creation of a row for a model.', async function () {
-    await cheetah.connect('127.0.0.1', 5001);
+  it('Test if "compile" adds a table to Kdb database.', async function () {
+    const conn = await cheetah.connect('127.0.0.1', 5001);
 
     const name = 'Trade';
-    const tradeSchema = new cheetah.Schema({
+    const table_name = Model.pluralizeName(name);
+    const firstSchema = new cheetah.Schema({
       date: {
         type: types.KDate,
       },
       time: { type: types.Time },
       sym: { type: types.Symbol },
       price: { type: types.Real },
-      size: { type: types.Int, default: 10 },
-      cond: { type: types.Char, default: 'N' },
     });
 
-    const Trade = await cheetah.model(name, tradeSchema);
+    const Trade = await cheetah.model(name, firstSchema);
 
-    const newTrade = await Trade.create({
-      date: new Date(2017, 7, 1),
-      time: new Date(2017, 7, 1, 1, 1, 1, 1),
-      sym: 'GOOGL',
-      price: 259.44,
-      size: 50,
-    });
-
-    const expected = [
-      {
-        date: '2017.08.01d',
-        time: '01:01:01.001',
-        sym: '`GOOGL',
-        price: '259.44e',
-        size: '50i',
-        cond: '"N"',
-      },
-    ];
+    const [firstTypeSchema, table_size] = await conn.getCurrentTableTypeSchema(
+      table_name,
+      cheetah
+    );
 
     await cheetah.close();
 
-    assert.deepEqual(expected, newTrade);
+    assert.deepEqual(firstSchema, new cheetah.Schema(firstTypeSchema));
+  });
+  it('Test if "compile" updating the schema by adding a column to an empty table.', async function () {
+    const conn = await cheetah.connect('127.0.0.1', 5001);
+
+    const name = 'Trade';
+    const table_name = Model.pluralizeName(name);
+    const firstSchema = new cheetah.Schema({
+      date: {
+        type: types.KDate,
+      },
+      time: { type: types.Time },
+      sym: { type: types.Symbol },
+      price: { type: types.Real },
+    });
+
+    await cheetah.model(name, firstSchema);
+
+    const secondSchema = new cheetah.Schema({
+      date: {
+        type: types.KDate,
+      },
+      time: { type: types.Time },
+      sym: { type: types.Symbol },
+      price: { type: types.Real },
+      cond: { type: types.Char },
+    });
+
+    await cheetah.model(name, secondSchema);
+
+    const [secondTypeSchema, table_size] = await conn.getCurrentTableTypeSchema(
+      table_name,
+      cheetah
+    );
+
+    await cheetah.close();
+
+    assert.deepEqual(secondSchema, new cheetah.Schema(secondTypeSchema));
+  });
+  it('Test if "compile" updating the schema by removing a column from an empty table.', async function () {
+    const conn = await cheetah.connect('127.0.0.1', 5001);
+
+    const name = 'Trade';
+    const table_name = Model.pluralizeName(name);
+    const firstSchema = new cheetah.Schema({
+      date: {
+        type: types.KDate,
+      },
+      time: { type: types.Time },
+      sym: { type: types.Symbol },
+      price: { type: types.Real },
+      cond: { type: types.Char },
+    });
+
+    await cheetah.model(name, firstSchema);
+
+    const secondSchema = new cheetah.Schema({
+      date: {
+        type: types.KDate,
+      },
+      time: { type: types.Time },
+      sym: { type: types.Symbol },
+      price: { type: types.Real },
+    });
+
+    await cheetah.model(name, secondSchema);
+
+    const [secondTypeSchema, table_size] = await conn.getCurrentTableTypeSchema(
+      table_name,
+      cheetah
+    );
+
+    await cheetah.close();
+
+    assert.deepEqual(secondSchema, new cheetah.Schema(secondTypeSchema));
   });
 });
