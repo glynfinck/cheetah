@@ -3,6 +3,20 @@ const cheetah = require('../../lib/cheetah');
 const Connection = require('../../lib/connection');
 const assert = require('assert');
 const types = cheetah.types;
+const Server = require('../connection-server/connection-server');
+
+// const server = new Server(5002, 'js-websocket-requests.q');
+
+// before(function () {
+//   console.log('starting');
+//   return server.start();
+// });
+
+// after(function () {
+//   console.log('ending');
+//   this.timeout(15000);
+//   return server.stop();
+// });
 
 describe("Test Connection member class method 'connection'", function () {
   it("Test if calling 'connection' produces a connection with a valid readyState and WebSocket", async function () {
@@ -18,7 +32,6 @@ describe("Test Connection member class method 'connection'", function () {
     assert(valid);
   });
 });
-
 describe("Test Connection member class method 'getCurrentTableTypeSchema'", function () {
   it('Test getting the current type schema "trades" from the database', async function () {
     // 1) open a connection
