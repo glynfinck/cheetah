@@ -67,3 +67,20 @@ describe('Bool static member test: convert', () => {
     assert.equal(Bool.convert(null), '0b');
   });
 });
+
+// Bool constructor tests
+describe('Bool constructor test: convert', () => {
+  // correct input types
+  it('convert(true) => "1b"', () => {
+    assert.equal(Bool.convert(true), '1b');
+  });
+
+  it('convert(false) => "0b"', () => {
+    assert.equal(Bool.convert(false), '0b');
+  });
+
+  // null input types
+  it('convert(null) => "0b"', () => {
+    assert.equal(Bool.convert(null), '0b');
+  });
+});
