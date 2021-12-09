@@ -2,6 +2,12 @@ const factory = require('../test-factory');
 const cheetah = require('../../lib/cheetah');
 const Schema = require('../../lib/schema');
 const types = cheetah.types;
+const Server = require('../connection-server/connection-server');
+
+const HOST = '127.0.0.1';
+const PORT = 5001;
+
+const server = new Server('q', { host: HOST, port: PORT });
 
 describe("Test Schema static class method '_validateSchemaUpdate'", function () {
   it('Test merge identical type_schema and new_schema_obj objects', function () {
@@ -197,6 +203,9 @@ describe("Test Schema static class method '_validateSchemaUpdate'", function () 
   // TODO: correct error output testing
 });
 describe("Test Schema static class method 'validateSchemaUpdate'", function () {
+  before(async function () {
+    await server.start();
+  });
   it('Test merge with the removal of a column for a table that is empty.', async function () {
     const conn = await cheetah.connect('127.0.0.1', 5001);
     const name = 'TestSchemaTrade';
@@ -222,5 +231,8 @@ describe("Test Schema static class method 'validateSchemaUpdate'", function () {
     }
 
     cheetah.close();
+  });
+  after(async function () {
+    await server.stop();
   });
 });

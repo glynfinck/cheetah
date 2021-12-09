@@ -2,6 +2,12 @@ const Model = require('../../lib/model');
 const cheetah = require('../../lib/cheetah');
 const types = cheetah.types;
 const assert = require('assert');
+const Server = require('../connection-server/connection-server');
+
+const HOST = '127.0.0.1';
+const PORT = 5001;
+
+const server = new Server('q', { host: HOST, port: PORT });
 
 describe('Test Model static function `Model.validateName()`', function () {
   it('Test for a valid input name', function () {
@@ -12,11 +18,12 @@ describe('Test Model static function `Model.validateName()`', function () {
   });
 });
 
-describe('Test Model class method "compile"', function () {
+describe('Test Model class method "model"', function () {
+  before(async function () {
+    await server.start();
+  });
   it('Test if "compile" adds a model to Cheetah instance.', async function () {
-    // TODO: initialize a Kdb+/Q child process from JavaScript so that we can
-    //       run our tests without having to boot up our kdb server seperately
-    await cheetah.connect('127.0.0.1', 5001);
+    await cheetah.connect(HOST, PORT);
 
     const name = 'Trade';
     const tradeSchema = new cheetah.Schema({
@@ -42,8 +49,8 @@ describe('Test Model class method "compile"', function () {
 
     assert(valid);
   });
-  it('Test if "compile" adds a table to Kdb database.', async function () {
-    const conn = await cheetah.connect('127.0.0.1', 5001);
+  it('Test if "model" adds a table to Kdb database.', async function () {
+    const conn = await cheetah.connect(HOST, PORT);
 
     const name = 'Trade';
     const table_name = Model.pluralizeName(name);
@@ -67,8 +74,8 @@ describe('Test Model class method "compile"', function () {
 
     assert.deepEqual(firstSchema, new cheetah.Schema(firstTypeSchema));
   });
-  it('Test if "compile" updating the schema by adding a column to an empty table.', async function () {
-    const conn = await cheetah.connect('127.0.0.1', 5001);
+  it('Test if "model" updating the schema by adding a column to an empty table.', async function () {
+    const conn = await cheetah.connect(HOST, PORT);
 
     const name = 'Trade';
     const table_name = Model.pluralizeName(name);
@@ -104,8 +111,8 @@ describe('Test Model class method "compile"', function () {
 
     assert.deepEqual(secondSchema, new cheetah.Schema(secondTypeSchema));
   });
-  it('Test if "compile" updating the schema by removing a column from an empty table.', async function () {
-    const conn = await cheetah.connect('127.0.0.1', 5001);
+  it('Test if "model" updating the schema by removing a column from an empty table.', async function () {
+    const conn = await cheetah.connect(HOST, PORT);
 
     const name = 'Trade';
     const table_name = Model.pluralizeName(name);
@@ -141,8 +148,8 @@ describe('Test Model class method "compile"', function () {
 
     assert.deepEqual(secondSchema, new cheetah.Schema(secondTypeSchema));
   });
-  it('Test if "compile" updating the schema by changing the type of a column for an empty table.', async function () {
-    const conn = await cheetah.connect('127.0.0.1', 5001);
+  it('Test if "model" updating the schema by changing the type of a column for an empty table.', async function () {
+    const conn = await cheetah.connect(HOST, PORT);
 
     const name = 'Trade';
     const table_name = Model.pluralizeName(name);
@@ -178,5 +185,59 @@ describe('Test Model class method "compile"', function () {
     await cheetah.close();
 
     assert.deepEqual(secondSchema, new cheetah.Schema(secondTypeSchema));
+  });
+  after(async function () {
+    await server.stop();
+  });
+});
+
+describe('Test Model class method "create"', function () {
+  before(async function () {
+    await server.start();
+  });
+  it('Test if "create" adds a row to the table using a model from a Cheetah instance.', async function () {
+    await cheetah.connect(HOST, PORT);
+
+    const name = 'Trade';
+    const tradeSchema = new cheetah.Schema({
+      date: {
+        type: types.KDate,
+      },
+      time: { type: types.Time },
+      sym: { type: types.Symbol },
+      price: { type: types.Real },
+      size: { type: types.Int },
+      cond: { type: types.Char },
+    });
+
+    const Trade = await cheetah.model(name, tradeSchema);
+
+    const newTrade = await Trade.create({
+      date: new Date(2020, 0, 1, 1, 1, 1, 1),
+      time: new Date(2020, 0, 1, 1, 1, 1, 1),
+      sym: 'APPL',
+      price: 45.99,
+      size: 50,
+      cond: 'Y',
+    });
+
+    await cheetah.close();
+
+    assert.deepEqual(
+      [
+        {
+          date: '2020.01.01d',
+          time: '01:01:01.001',
+          sym: '`APPL',
+          price: '45.99e',
+          size: '50i',
+          cond: '"Y"',
+        },
+      ],
+      newTrade
+    );
+  });
+  after(async function () {
+    await server.stop();
   });
 });

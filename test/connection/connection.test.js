@@ -5,23 +5,18 @@ const assert = require('assert');
 const types = cheetah.types;
 const Server = require('../connection-server/connection-server');
 
-// const server = new Server(5002, 'js-websocket-requests.q');
+const HOST = '127.0.0.1';
+const PORT = 5001;
 
-// before(function () {
-//   console.log('starting');
-//   return server.start();
-// });
-
-// after(function () {
-//   console.log('ending');
-//   this.timeout(15000);
-//   return server.stop();
-// });
+const server = new Server('q', { host: HOST, port: PORT });
 
 describe("Test Connection member class method 'connection'", function () {
+  before(async function () {
+    await server.start();
+  });
   it("Test if calling 'connection' produces a connection with a valid readyState and WebSocket", async function () {
     // 1) open a connection
-    const conn = await cheetah.connect('127.0.0.1', 5001);
+    const conn = await cheetah.connect(HOST, PORT);
 
     // 2) save valid
     const valid = conn.readyState === Connection.STATES.connected;
@@ -31,14 +26,20 @@ describe("Test Connection member class method 'connection'", function () {
 
     assert(valid);
   });
+  after(async function () {
+    await server.stop();
+  });
 });
 describe("Test Connection member class method 'getCurrentTableTypeSchema'", function () {
+  before(async function () {
+    await server.start();
+  });
   it('Test getting the current type schema "trades" from the database', async function () {
     // 1) open a connection
-    const conn = await cheetah.connect('127.0.0.1', 5001);
+    const conn = await cheetah.connect(HOST, PORT);
 
     // 2) construct inputs
-    const table_name = 'tradetests';
+    const table_name = 'trades';
     const inputs = [table_name, cheetah];
 
     // 3) construct expected
@@ -54,8 +55,8 @@ describe("Test Connection member class method 'getCurrentTableTypeSchema'", func
       cond: { type: types.Char },
     };
 
-    const TradeTest = await cheetah.model(
-      'TradeTest',
+    const Trade = await cheetah.model(
+      'Trade',
       new cheetah.Schema(table_type_schema_obj)
     );
 
@@ -70,5 +71,8 @@ describe("Test Connection member class method 'getCurrentTableTypeSchema'", func
 
     // 5) close the connection
     await conn.close();
+  });
+  after(async function () {
+    await server.stop();
   });
 });
