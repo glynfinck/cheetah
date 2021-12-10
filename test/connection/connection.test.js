@@ -76,3 +76,38 @@ describe("Test Connection member class method 'getCurrentTableTypeSchema'", func
     await server.stop();
   });
 });
+describe("Test Connection member class method 'createVariable'", function () {
+  before(async function () {
+    await server.start();
+  });
+  it('Test getting the current type schema "trades" from the database', async function () {
+    // 1) open a connection
+    const conn = await cheetah.connect(HOST, PORT);
+
+    // 2) add a variable of type int
+
+    // 5) close the connection
+    await conn.close();
+  });
+  after(async function () {
+    await server.stop();
+  });
+});
+
+describe("Test Connection member class method 'getVariableNumType'", function () {
+  before(async function () {
+    await server.start();
+  });
+  it('Test getting the current type schema "trades" from the database', async function () {
+    // 1) open a connection
+    const conn = await cheetah.connect(HOST, PORT);
+
+    // 2) add a variable of type int
+
+    // 5) close the connection
+    await conn.close();
+  });
+  after(async function () {
+    await server.stop();
+  });
+});

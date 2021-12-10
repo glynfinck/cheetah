@@ -62,3 +62,24 @@ exports.testAboveMaxPositive = function (Type, max_positive, amount) {
     assert.equal(Type.isValid(max_positive_add_amount), false);
   });
 };
+
+// TODO: implement these helper functions for testing
+
+/**
+ * Returns whether or not a table exists for the provided table_name
+ * and connection instance provided
+ *
+ *
+ * @param {String} table_name the name for the table in the database
+ * @param {Connection} connection the connection instance
+ * @return {Promise<Boolean>} a Boolean value indicating whether or not the table exists
+ * @api public
+ */
+exports.variableExists = function (var_name, connection) {
+  // 1) check if the variable exists
+};
+
+exports.getVariableType = function (var_name, conn) {};
+
+exports.getTable = function (table_name, conn) {};
+exports.getTableSize = function (table_name, conn) {};

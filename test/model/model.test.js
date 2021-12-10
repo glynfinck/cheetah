@@ -237,6 +237,54 @@ describe('Test Model class method "create"', function () {
       newTrade
     );
   });
+  it('Test if "create" adds a list of one row to the table using a model from a Cheetah instance.', async function () {
+    await cheetah.connect(HOST, PORT);
+
+    const name = 'Trade';
+    const tradeSchema = new cheetah.Schema({
+      date: {
+        type: types.KDate,
+      },
+      time: { type: types.Time },
+      sym: { type: types.Symbol },
+      price: { type: types.Real },
+      size: { type: types.Int },
+      cond: { type: types.Char },
+    });
+
+    const Trade = await cheetah.model(name, tradeSchema);
+
+    const newTrade = await Trade.create([
+      {
+        date: new Date(2020, 0, 1, 1, 1, 1, 1),
+        time: new Date(2020, 0, 1, 1, 1, 1, 1),
+        sym: 'APPL',
+        price: 45.99,
+        size: 50,
+        cond: 'Y',
+      },
+    ]);
+
+    await cheetah.close();
+
+    // check if the output is as expected
+    assert.deepEqual(
+      [
+        {
+          date: '2020.01.01d',
+          time: '01:01:01.001',
+          sym: '`APPL',
+          price: '45.99e',
+          size: '50i',
+          cond: '"Y"',
+        },
+      ],
+      newTrade
+    );
+
+    // check if a row was actually created in the Kdb+ database
+    // TODO: create helper functions for testing this
+  });
   after(async function () {
     await server.stop();
   });
